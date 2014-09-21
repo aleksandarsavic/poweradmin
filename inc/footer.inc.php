@@ -36,18 +36,24 @@ if (is_object($db)) {
 }
 ?>
 </div> <!-- /content -->
-<div class="footer">
+
+<div id="footer"><div class="container-fluid">
+  <p class="muted credit pull-right">
     <a href="http://www.poweradmin.org/">a complete(r) <strong>poweradmin</strong><?php
-        if (isset($_SESSION["userid"])) {
-            echo " v $VERSION";
-        }
-        ?></a> - <a href="http://www.poweradmin.org/credits.html">credits</a>
-</div>
+    if (isset($_SESSION["userid"])) {
+      echo " v $VERSION";
+    } ?></a>
+    ·
+    <a href="http://www.poweradmin.org/credits.html">credits</a>
+  </p>
+</div></div>
+
 <?php
 if (file_exists('inc/custom_footer.inc.php')) {
     include('inc/custom_footer.inc.php');
 }
 ?>
+</div>
 </body>
 </html>
 

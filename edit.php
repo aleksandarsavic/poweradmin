@@ -207,7 +207,7 @@ if ($records == "-1") {
     echo " <p>" . _("This zone does not have any records. Weird.") . "</p>\n";
 } else {
     echo "   <form method=\"post\" action=\"\">\n";
-    echo "   <table>\n";
+    echo "   <table class=\"table  table-bordered table-hover\">\n";
     echo "    <tr>\n";
     echo "     <th>&nbsp;</th>\n";
     echo "     <th><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=id\">" . _('Id') . "</a></th>\n";
@@ -326,7 +326,7 @@ if ($perm_content_edit == "all" || ($perm_content_edit == "own" || $perm_content
         $zone_name = get_zone_name_from_id($zone_id);
         echo "     <form method=\"post\" action=\"add_record.php?id=" . $zone_id . "\">\n";
         echo "      <input type=\"hidden\" name=\"domain\" value=\"" . $zone_id . "\">\n";
-        echo "      <table border=\"0\" cellspacing=\"4\">\n";
+        echo "      <table border=\"0\" cellspacing=\"4\" class=\"table  table-bordered table-hover\">\n";
         echo "       <tr>\n";
         echo "        <td class=\"n\">" . _('Name') . "</td>\n";
         echo "        <td class=\"n\">&nbsp;</td>\n";
@@ -378,7 +378,7 @@ if ($perm_content_edit == "all" || ($perm_content_edit == "own" || $perm_content
 }
 
 echo "   <div id=\"meta\">\n";
-echo "    <table>\n";
+echo "    <table class=\"table  table-bordered table-hover\">\n";
 echo "     <tr>\n";
 echo "      <th colspan=\"2\">" . _('Owner of zone') . "</th>\n";
 echo "     </tr>\n";

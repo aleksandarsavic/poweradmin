@@ -805,19 +805,19 @@ msgstr "Index"
 
 #: inc/header.inc.php:61 index.php:39 search.php:32
 msgid "Search zones and records"
-msgstr "Search zones and records"
+msgstr "Search"
 
 #: inc/header.inc.php:64 index.php:42 list_zones.php:39
 msgid "List zones"
-msgstr "List zones"
+msgstr "Zones"
 
 #: inc/header.inc.php:67 index.php:45
 msgid "List zone templates"
-msgstr "List zone templates"
+msgstr "Templates"
 
 #: inc/header.inc.php:70 index.php:48 list_supermasters.php:32
 msgid "List supermasters"
-msgstr "List supermasters"
+msgstr "Supermasters"
 
 #: inc/header.inc.php:82 index.php:60 users.php:47
 msgid "User administration"

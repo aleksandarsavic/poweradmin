@@ -41,7 +41,7 @@ if ($perm_zone_master_add == "0") {
     error(ERR_PERM_EDIT_ZONE_TEMPL);
 } else {
     echo "    <h2>" . _('Zone templates for') . " " . $username . "</h2>\n";
-    echo "     <table>\n";
+    echo "     <table class=\"table  table-bordered table-hover\">\n";
     echo "      <tr>\n";
     echo "       <th>&nbsp;</th>\n";
     echo "       <th>" . _('Name') . "</th>\n";
@@ -65,9 +65,9 @@ if ($perm_zone_master_add == "0") {
     }
 
     echo "     </table>\n";
-    echo "     <ul>\n";
-    echo "      <li><a href=\"add_zone_templ.php\">" . _('Add zone template') . "</a>.</li>\n";
-    echo "     </ul>\n";
+    echo "     <div class=\"page-actions\">\n";
+    echo "      <a href=\"add_zone_templ.php\" class=\"btn btn-primary\">" . _('Add zone template') . "</a>\n";
+    echo "     </div>\n";
 }
 
 include_once("inc/footer.inc.php");

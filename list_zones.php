@@ -66,17 +66,20 @@ if (!in_array(ZONE_SORT_BY, array('name', 'type', 'count_records'))) {
     $zone_sort_by = 'name';
 }
 
-echo "    <h2>" . _('List zones') . "</h2>\n";
+echo "      <div class=\"page-header\">\n";
+echo "        <h1>" . _('List zones') . "</h1>\n";
+echo "      </div>\n";
+
 
 if ($perm_view == "none") {
-    echo "     <p>" . _('You do not have the permission to see any zones.') . "</p>\n";
+    echo "     <div class=\"alert alert-warning\" role=\"alert\">" . _('You do not have the permission to see any zones.') . "</div>\n";
 } elseif (($count_zones_view > $iface_rowamount && $count_zones_all_letterstart == "0") || $count_zones_view == 0) {
     if ($count_zones_view > $iface_rowamount) {
         echo "<div class=\"showmax\">";
         show_letters(LETTERSTART);
         echo "</div>";
     }
-    echo "     <p>" . _('There are no zones to show in this listing.') . "</p>\n";
+    echo "     <div class=\"alert alert-warning\" role=\"alert\">" . _('There are no zones to show in this listing.') . "</div>\n";
 } else {
     if (LETTERSTART != 'all') {
         echo "     <div class=\"showmax\">\n";
@@ -90,7 +93,7 @@ if ($perm_view == "none") {
         echo "</div>";
     }
     echo "     <form method=\"post\" action=\"delete_domains.php\">\n";
-    echo "     <table>\n";
+    echo "     <table class=\"table  table-bordered table-hover\">\n";
     echo "      <tr>\n";
     echo "       <th>&nbsp;</th>\n";
     echo "       <th>&nbsp;</th>\n";
@@ -158,7 +161,7 @@ if ($perm_view == "none") {
         echo "           </tr>\n";
     }
     echo "          </table>\n";
-    echo "      <input type=\"submit\" name=\"commit\" value=\"" . _('Delete zone(s)') . "\" class=\"button\">\n";
+    echo "      <input type=\"submit\" name=\"commit\" value=\"" . _('Delete zone(s)') . "\" class=\"btn btn-danger\">\n";
     echo "     </form>\n";
 }
 

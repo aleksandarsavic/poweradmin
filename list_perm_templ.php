@@ -39,7 +39,7 @@ if ($perm_templ_perm_edit == "0") {
     error(ERR_PERM_EDIT_PERM_TEMPL);
 } else {
     echo "    <h2>" . _('Permission templates') . "</h2>\n";
-    echo "     <table>\n";
+    echo "     <table class=\"table  table-bordered table-hover\">\n";
     echo "      <tr>\n";
     echo "       <th>&nbsp;</th>\n";
     echo "       <th>" . _('Name') . "</th>\n";

@@ -39,7 +39,7 @@ $supermasters = get_supermasters();
 $num_supermasters = ($supermasters == -1) ? 0 : count($supermasters);
 
 echo "     <h2>" . _('List supermasters') . "</h2>\n";
-echo "     <table>\n";
+echo "     <table class=\"table  table-bordered table-hover\">\n";
 echo "      <tr>\n";
 echo "       <th>&nbsp;</th>\n";
 echo "       <th>" . _('IP address of supermaster') . "</th>\n";
