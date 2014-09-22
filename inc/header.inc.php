@@ -40,8 +40,8 @@ echo "<html>\n";
 echo " <head>\n";
 echo "  <title>" . $iface_title . "</title>\n";
 //echo "  <link rel=stylesheet href=\"style/" . $iface_style . ".css\" type=\"text/css\">\n";
-echo "<link rel=\"stylesheet\" href=\"style/bootstrap/bootstrap.min.css\">\n";
-echo "<link rel=\"stylesheet\" href=\"style/bootstrap/custom.css\">\n";
+echo "<link rel=\"stylesheet\" href=\"style/bootstrap/css/bootstrap.min.css\">\n";
+echo "<link rel=\"stylesheet\" href=\"style/bootstrap/css/custom.css\">\n";
 echo "<script src=\"/style/bootstrap/js/jquery-1.11.1.min.js\"></script>\n";
 echo "<script src=\"/style/bootstrap/js/bootstrap.min.js\"></script>\n";
 echo "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
@@ -77,6 +77,19 @@ if (file_exists('install')) {
         echo "<br>";
     }
 
+    function page_active($page) {
+      return $_SERVER['PHP_SELF'] == "/".$page;
+    }
+
+    function menu_item($page, $title) {
+      if (page_active($page)) {
+        $active = " class=\"active\"";
+      } else {
+        $active = "";
+      }
+      return "<li".$active."><a href=\"".$page."\">" . _($title) . "</a></li>\n";
+    }
+
     echo "<nav class=\"navbar navbar-inverse navbar-static-top\" role=\"navigation\">\n";
     echo "<div class=\"container-fluid\">\n";
 
@@ -86,34 +99,34 @@ if (file_exists('install')) {
 
     echo "<ul class=\"nav navbar-nav\">\n";
     if ($perm_view_zone_own == "1" || $perm_view_zone_other == "1") {
-        echo "  <li><a href=\"list_zones.php\">" . _('Zones') . "</a></li>\n";
+        echo menu_item("list_zones.php", "Zones");
     }
     if ($perm_zone_master_add) {
-        echo "  <li><a href=\"list_zone_templ.php\">" . _('Templates') . "</a></li>\n";
+        echo menu_item("list_zone_templ.php", "Templates");
     }
     if ($perm_supermaster_view) {
-        echo "  <li><a href=\"list_supermasters.php\">" . _('Supermasters') . "</a></li>\n";
+        echo menu_item("list_supermasters.php", "Supermasters");
     }
     if ($perm_zone_master_add or $perm_zone_slave_add or $perm_supermaster_add or $perm_zone_master_add) {
       echo "  <li class=\"dropdown\">\n";
       echo "    <a href='#' class='dropdown-toggle' data-toggle='dropdown'>Add <span class='caret'></span></a>\n";
       echo "    <ul class='dropdown-menu' role='menu'>\n";
       if ($perm_zone_master_add) {
-          echo "      <li><a href=\"add_zone_master.php\">" . _('Add master zone') . "</a></li>\n";
+        echo menu_item("add_zone_master.php", "Add master zone");
       }
       if ($perm_zone_slave_add) {
-          echo "      <li><a href=\"add_zone_slave.php\">" . _('Add slave zone') . "</a></li>\n";
+        echo menu_item("add_zone_slave.php", "Add slave zone");
       }
       if ($perm_supermaster_add) {
-          echo "      <li><a href=\"add_supermaster.php\">" . _('Add supermaster') . "</a></li>\n";
+        echo menu_item("add_supermaster.php", "Add supermaster");
       }
       if ($perm_zone_master_add) {
-          echo "      <li><a href=\"bulk_registration.php\">" . _('Bulk registration') . "</a></li>\n";
+        echo menu_item("bulk_registration.php", "Bulk registration");
       }
       echo "    </ul>\n  </li>\n";
     }
     if ($perm_search == "1") {
-        echo "  <li><a href=\"search.php\">" . _('Search') . "</a></li>\n";
+        echo menu_item("search.php", "Search");
     }
     echo "</ul>\n";
 
@@ -122,10 +135,11 @@ if (file_exists('install')) {
     echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">".$_SESSION["name"]." <span class=\"caret\"><span></a>\n";
     echo "<ul class=\"dropdown-menu\" role=\"menu\">\n";
     if ($_SESSION ["auth_used"] != "ldap") {
-        echo "    <li><a href=\"change_password.php\">" . _('Change password') . "</a></li>\n";
+        echo menu_item("change_password.php", "Change password");
     }
-    echo "    <li><a href=\"users.php\">" . _('User administration') . "</a></li>\n";
-    echo "    <li><a href=\"index.php?logout\">" . _('Logout') . "</a></li>\n";
+    echo menu_item("users.php", "User administration");
+    echo menu_item("index.php?logout", "Logout");
+
     echo "</ul></li></ul>\n";
 
     echo "</div>\n"; // .container-fluid

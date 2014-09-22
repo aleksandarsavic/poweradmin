@@ -93,10 +93,10 @@ if ($perm_view == "none") {
         echo "</div>";
     }
     echo "     <form method=\"post\" action=\"delete_domains.php\">\n";
-    echo "     <table class=\"table  table-bordered table-hover\">\n";
-    echo "      <tr>\n";
+    echo "     <table class=\"table table-condensed table-hover\">\n";
+    echo "      <thead><tr>\n";
     echo "       <th>&nbsp;</th>\n";
-    echo "       <th>&nbsp;</th>\n";
+    echo "       <th class=\"actions\">&nbsp;</th>\n";
     echo "       <th><a href=\"list_zones.php?zone_sort_by=name\">" . _('Name') . "</a></th>\n";
     echo "       <th><a href=\"list_zones.php?zone_sort_by=type\">" . _('Type') . "</a></th>\n";
     echo "       <th><a href=\"list_zones.php?zone_sort_by=count_records\">" . _('Records') . "</a></th>\n";
@@ -110,7 +110,7 @@ if ($perm_view == "none") {
         echo "       <th>" . _('DNSSEC') . "</th>\n";
     }
 
-    echo "      </tr>\n";
+    echo "      </tr></thead><tbody>\n";
 
     if ($count_zones_view <= $iface_rowamount) {
         $zones = get_zones($perm_view, $_SESSION['userid'], "all", ROWSTART, $iface_rowamount, $zone_sort_by);
@@ -139,13 +139,13 @@ if ($perm_view == "none") {
         }
         echo "          </td>\n";
         echo "          <td class=\"actions\">\n";
-        echo "           <a href=\"edit.php?name=" . $zone['name'] . "&id=" . $zone['id'] . "\"><img src=\"images/edit.gif\" title=\"" . _('View zone') . " " . $zone['name'] . "\" alt=\"[ " . _('View zone') . " " . $zone['name'] . " ]\"></a>\n";
+        echo "           <a href=\"edit.php?name=" . $zone['name'] . "&id=" . $zone['id'] . "\" title=\"" . _('View zone') . " " . $zone['name'] . "\"><span class=\"glyphicon glyphicon-pencil\"></span></a>\n";
         if ($perm_edit == "all" || ( $perm_edit == "own" && $user_is_zone_owner == "1")) {
-            echo "           <a href=\"delete_domain.php?name=" . $zone['name'] . "&id=" . $zone["id"] . "\"><img src=\"images/delete.gif\" title=\"" . _('Delete zone') . " " . $zone['name'] . "\" alt=\"[ " . _('Delete zone') . " " . $zone['name'] . " ]\"></a>\n";
+          echo "           <a href=\"delete_domain.php?name=" . $zone['name'] . "&id=" . $zone["id"] . "\" title=\"" . _('Delete zone') . " " . $zone['name'] . "\"><span class=\"glyphicon glyphicon-trash\"></span></a>\n";
         }
         echo "          </td>\n";
-        echo "          <td class=\"name\">" . $zone["name"] . "</td>\n";
-        echo "          <td class=\"type\">" . strtolower($zone["type"]) . "</td>\n";
+        echo "          <td class=\"name\"><a href=\"edit.php?name=" . $zone['name'] . "&id=" . $zone['id'] . "\">" . $zone["name"] . "</a></td>\n";
+        echo "          <td class=\"type\">" . strtolower($zone["type"]) . "</span></td>\n";
         echo "          <td class=\"count\">" . $zone["count_records"] . "</td>\n";
         echo "          <td class=\"owner\">" . $zone_owners . "</td>\n";
         if ($iface_zonelist_serial) {
@@ -160,7 +160,7 @@ if ($perm_view == "none") {
         }
         echo "           </tr>\n";
     }
-    echo "          </table>\n";
+    echo "          </tbody></table>\n";
     echo "      <input type=\"submit\" name=\"commit\" value=\"" . _('Delete zone(s)') . "\" class=\"btn btn-danger\">\n";
     echo "     </form>\n";
 }

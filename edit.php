@@ -196,7 +196,36 @@ $record_count = count_zone_records($zone_id);
 $zone_templates = get_list_zone_templ($_SESSION['userid']);
 $zone_template_id = get_zone_template($zone_id);
 
-echo "   <h2>" . _('Edit zone') . " \"" . get_zone_name_from_id($zone_id) . "\"</h2>\n";
+  function form_actions($zone_id) {
+    $actions = "     <div class=\"btn-group\">\n";
+    $actions .= "       <input type=\"submit\" class=\"btn btn-primary\" name=\"commit\" value=\"" . _('Commit changes') . "\">\n";
+    $actions .= "       <input type=\"reset\" class=\"btn btn-warning\" name=\"reset\" value=\"" . _('Reset changes') . "\">\n";
+
+    $pdnssec_use = true;
+    if ($pdnssec_use) {
+        $zone_name = get_zone_name_from_id($zone_id);
+
+        if (42==42) {//(dnssec_is_zone_secured($zone_name)) {
+            $actions .= "     <input type=\"button\" class=\"btn btn-default\" name=\"dnssec\" onclick=\"location.href = 'dnssec.php?id=".$zone_id."';\" value=\"" . _('Keys') . "\">\n";
+            $actions .= "     <input type=\"submit\" class=\"btn btn-default\" name=\"unsign_zone\" value=\"" . _('Unsign this zone') . "\">\n";
+        } else {
+            $actions .= "     <input type=\"submit\" class=\"btn btn-default\" name=\"sign_zone\" value=\"" . _('Sign this zone') . "\">\n";
+        }
+    }
+    $actions .= "     </div>\n"; // button group
+    return $actions;
+  }
+
+echo "<div class=\"page-header no-top\">\n";
+?>
+<ol class="breadcrumb">
+  <li><a href="list_zones.php">Zones</a></li>
+  <li class="active"><?php echo _('Edit zone'); ?></li>
+</ol>
+<?php
+echo "<div class='pull-right'>".form_actions($zone_id)."</div>\n";
+echo "<h1>" . get_zone_name_from_id($zone_id) . "</h1>\n";
+echo "</div>\n";
 
 echo "   <div class=\"showmax\">\n";
 show_pages($record_count, $iface_rowamount, $zone_id);
@@ -207,16 +236,18 @@ if ($records == "-1") {
     echo " <p>" . _("This zone does not have any records. Weird.") . "</p>\n";
 } else {
     echo "   <form method=\"post\" action=\"\">\n";
-    echo "   <table class=\"table  table-bordered table-hover\">\n";
-    echo "    <tr>\n";
+    echo "<div class=\"panel panel-default\">\n";
+    echo "<div class=\"panel-heading\">Records</div>\n";
+    echo "   <table class=\"table table-condensed table-hover\">\n";
+    echo "    <thead><tr>\n";
     echo "     <th>&nbsp;</th>\n";
     echo "     <th><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=id\">" . _('Id') . "</a></th>\n";
     echo "     <th><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=name\">" . _('Name') . "</a></th>\n";
-    echo "     <th><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=type\">" . _('Type') . "</a></th>\n";
+    echo "     <th class='col-md-1'><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=type\">" . _('Type') . "</a></th>\n";
     echo "     <th><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=content\">" . _('Content') . "</a></th>\n";
-    echo "     <th><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=prio\">" . _('Priority') . "</a></th>\n";
-    echo "     <th><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=ttl\">" . _('TTL') . "</a></th>\n";
-    echo "    </tr>\n";
+    echo "     <th class='col-md-1'><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=prio\">" . _('Priority') . "</a></th>\n";
+    echo "     <th class='col-md-1'><a href=\"edit.php?id=" . $zone_id . "&amp;record_sort_by=ttl\">" . _('TTL') . "</a></th>\n";
+    echo "    </tr></thead><tbody>\n";
     foreach ($records as $r) {
         if (!($r['type'] == "SOA" || ($r['type'] == "NS" && $perm_content_edit == "own_as_client"))) {
             echo "    <input type=\"hidden\" name=\"record[" . $r['id'] . "][rid]\" value=\"" . $r['id'] . "\">\n";
@@ -232,10 +263,8 @@ if ($records == "-1") {
         }        
         else {
             echo "     <td class=\"n\">\n";
-            echo "      <a href=\"edit_record.php?id=" . $r['id'] . "&amp;domain=" . $zone_id . "\">
-                                                <img src=\"images/edit.gif\" alt=\"[ " . _('Edit record') . " ]\"></a>\n";
-            echo "      <a href=\"delete_record.php?id=" . $r['id'] . "&amp;domain=" . $zone_id . "\">
-                                                <img src=\"images/delete.gif\" ALT=\"[ " . _('Delete record') . " ]\" BORDER=\"0\"></a>\n";
+            echo "      <a href=\"edit_record.php?id=" . $r['id'] . "&amp;domain=" . $zone_id . "\" title=" . _('Edit record') . "><span class=\"glyphicon glyphicon-pencil\"></span></a>\n";
+            echo "      <a href=\"delete_record.php?id=" . $r['id'] . "&amp;domain=" . $zone_id . "\" title=" . _('Delete record') . "><span class=\"glyphicon glyphicon-trash\"></span></a>\n";
             echo "     </td>\n";
         }
         echo "     <td class=\"n\">{$r['id']}</td>\n";
@@ -246,7 +275,7 @@ if ($records == "-1") {
             echo "     <td class=\"n\">&nbsp;</td>\n";
             echo "     <td class=\"n\">" . $r['ttl'] . "</td>\n";
         } else {
-            echo "      <td class=\"u\"><input class=\"wide\" name=\"record[" . $r['id'] . "][name]\" value=\"" . htmlspecialchars($r['name']) . "\"></td>\n";
+            echo "      <td class=\"u\"><input class=\"form-control wide\" name=\"record[" . $r['id'] . "][name]\" value=\"" . htmlspecialchars($r['name']) . "\"></td>\n";
             echo "      <td class=\"u\">\n";
             echo "       <select name=\"record[" . $r['id'] . "][type]\">\n";
             $found_selected_type = false;
@@ -271,30 +300,27 @@ if ($records == "-1") {
             }
             echo "       </select>\n";
             echo "      </td>\n";
-            echo "      <td class=\"u\"><input class=\"wide\" name=\"record[" . $r['id'] . "][content]\" value=\"" . htmlspecialchars($clean_content) . "\"></td>\n";
-            echo "      <td class=\"u\"><input size=\"4\" id=\"priority_field_" . $r['id'] . "\" name=\"record[" . $r['id'] . "][prio]\" value=\"" . htmlspecialchars($r['prio']) . "\"></td>\n";
-            echo "      <td class=\"u\"><input size=\"4\" name=\"record[" . $r['id'] . "][ttl]\" value=\"" . htmlspecialchars($r['ttl']) . "\"></td>\n";
+            echo "      <td class=\"u\"><input class=\"form-control wide\" name=\"record[" . $r['id'] . "][content]\" value=\"" . htmlspecialchars($clean_content) . "\"></td>\n";
+            echo "      <td class=\"u\"><input class=\"form-control\" size=\"4\" id=\"priority_field_" . $r['id'] . "\" name=\"record[" . $r['id'] . "][prio]\" value=\"" . htmlspecialchars($r['prio']) . "\"></td>\n";
+            echo "      <td class=\"u\"><input class=\"form-control\" size=\"4\" name=\"record[" . $r['id'] . "][ttl]\" value=\"" . htmlspecialchars($r['ttl']) . "\"></td>\n";
         }
         echo "     </tr>\n";
     }
-    echo "    <tr>\n";
-    echo "     <td colspan=\"6\">&nbsp;</td>\n";
-    echo "    </tr>\n";
-    echo "    <tr>\n";
-    echo "     <td>&nbsp;</td><td colspan=\"5\">Comments:</td>\n";
-    echo "    </tr>\n";
-    echo "    <tr>\n";
+    echo "</tbody></table></div>\n";
+    echo "<div class=\"row\">\n";
+    
+    echo "<div class='col-xs-6'><div class=\"panel panel-default\">\n";
+    echo "<div class=\"panel-heading\">Comments</div>\n";
     echo "     <td class=\"n\">\n";
     echo "      <a href=\"edit_comment.php?domain=" . $zone_id . "\">
                             <img src=\"images/edit.gif\" alt=\"[ " . _('Edit comment') . " ]\"></a>\n";
     echo "     </td>\n";
     echo "     <td colspan=\"4\"><textarea rows=\"5\" cols=\"80\" name=\"comment\">" . htmlspecialchars(get_zone_comment($zone_id)) . "</textarea></td>\n";
     echo "     <td>&nbsp;</td>\n";
+    echo "</div></div>\n"; // panel comments
 
-    echo "     <tr>\n";
-    echo "      <th colspan=\"6\"><br>Save as new template:</th>\n";
-    echo "     </tr>\n";
-    echo "     <tr>\n";
+    echo "<div class='col-xs-6'><div class=\"panel panel-default\">\n";
+    echo "<div class=\"panel-heading\">Save as new template</div>\n";
     echo "       <td colspan=\"2\">" . _('Template Name') . "</td>\n";
     echo "       <td><input class=\"wide\" type=\"text\" name=\"templ_name\" value=\"\"></td>\n";
     echo "      </tr>\n";
@@ -302,22 +328,14 @@ if ($records == "-1") {
     echo "       <td colspan=\"2\">" . _('Template Description') . "</td>\n";
     echo "       <td><input class=\"wide\" type=\"text\" name=\"templ_descr\" value=\"\"></td>\n";
     echo "      </tr>\n";
-    echo "    </table>\n";
-    echo "     <input type=\"submit\" class=\"button\" name=\"commit\" value=\"" . _('Commit changes') . "\">\n";
-    echo "     <input type=\"reset\" class=\"button\" name=\"reset\" value=\"" . _('Reset changes') . "\">\n";
-    echo "     <input type=\"submit\" class=\"button\" name=\"save_as\" value=\"" . _('Save as template') . "\">\n";
+    echo "      <div class=\"panel-body\"><p><input type=\"submit\" class=\"btn btn-default btn-sm\" name=\"save_as\" value=\"" . _('Save as template') . "\">\n";
+    echo "      </p></div>";
+    echo "</div></div>\n"; // panel new tpl
+    echo "</div>\n"; // row
 
-    if ($pdnssec_use) {
-        $zone_name = get_zone_name_from_id($zone_id);
-
-        if (dnssec_is_zone_secured($zone_name)) {
-            echo "     <input type=\"button\" class=\"button\" name=\"dnssec\" onclick=\"location.href = 'dnssec.php?id=".$zone_id."';\" value=\"" . _('DNSSEC') . "\">\n";
-            echo "     <input type=\"submit\" class=\"button\" name=\"unsign_zone\" value=\"" . _('Unsign this zone') . "\">\n";
-        } else {
-            echo "     <input type=\"submit\" class=\"button\" name=\"sign_zone\" value=\"" . _('Sign this zone') . "\">\n";
-        }
-    }
-
+    echo "<div class=\"center-block\" style=\"text-align:center\">\n";
+    echo form_actions($zone_id);
+    echo "</div>\n";
     echo "    </form>\n";
 }
 
@@ -325,17 +343,19 @@ if ($perm_content_edit == "all" || ($perm_content_edit == "own" || $perm_content
     if ($domain_type != "SLAVE") {
         $zone_name = get_zone_name_from_id($zone_id);
         echo "     <form method=\"post\" action=\"add_record.php?id=" . $zone_id . "\">\n";
+    echo "<div class=\"panel panel-default\">\n";
+    echo "<div class=\"panel-heading\">Add Record</div>\n";
         echo "      <input type=\"hidden\" name=\"domain\" value=\"" . $zone_id . "\">\n";
-        echo "      <table border=\"0\" cellspacing=\"4\" class=\"table  table-bordered table-hover\">\n";
-        echo "       <tr>\n";
+        echo "      <table border=\"0\" cellspacing=\"4\" class=\"table table-condensed table-hover\">\n";
+        echo "       <thead><tr>\n";
         echo "        <td class=\"n\">" . _('Name') . "</td>\n";
         echo "        <td class=\"n\">&nbsp;</td>\n";
         echo "        <td class=\"n\">" . _('Type') . "</td>\n";
         echo "        <td class=\"n\">" . _('Content') . "</td>\n";
         echo "        <td class=\"n\">" . _('Priority') . "</td>\n";
         echo "        <td class=\"n\">" . _('TTL') . "</td>\n";
-        echo "       </tr>\n";
-        echo "       <tr>\n";
+        echo "       </tr></thead>\n";
+        echo "       <tbody><tr>\n";
         echo "        <td class=\"n\"><input type=\"text\" name=\"name\" class=\"input\" value=\"\">." . $zone_name . "</td>\n";
         echo "        <td class=\"n\">IN</td>\n";
         echo "        <td class=\"n\">\n";
@@ -355,7 +375,7 @@ if ($perm_content_edit == "all" || ($perm_content_edit == "own" || $perm_content
                     $rev = "";
                 } else if ((strtoupper($record_type) == 'A') && $iface_add_reverse_record) {
                     $add = " SELECTED";
-                    $rev = "<input type=\"checkbox\" name=\"reverse\"><span class=\"normaltext\">" . _('Add also reverse record') . "</span>\n";
+                    $rev = "<label><input type=\"checkbox\" name=\"reverse\">&nbsp;<span class=\"normaltext\">" . _('Add also reverse record') . "</span></label>\n";
                 } else {
                     $add = "";
                 }
@@ -369,19 +389,19 @@ if ($perm_content_edit == "all" || ($perm_content_edit == "own" || $perm_content
         echo "        <td class=\"n\"><input type=\"text\" name=\"content\" class=\"input\" value=\"\"></td>\n";
         echo "        <td class=\"n\"><input type=\"text\" name=\"prio\" class=\"sinput\" value=\"\"></td>\n";
         echo "        <td class=\"n\"><input type=\"text\" name=\"ttl\" class=\"sinput\" value=\"\"></td>\n";
-        echo "       </tr>\n";
+        echo "       </tr></tbody>\n";
         echo "      </table>\n";
-        echo "      <input type=\"submit\" name=\"commit\" value=\"" . _('Add record') . "\" class=\"button\">\n";
-        echo "      $rev";
-        echo "     </form>\n";
+        echo "      <div class=\"panel-body\"><p><input type=\"submit\" name=\"commit\" value=\"" . _('Add record') . "\" class=\"btn btn-primary btn-sm\">\n";
+        echo "      $rev</p></div>";
+        echo "     </div></form>\n";
     }
 }
 
-echo "   <div id=\"meta\">\n";
+    echo "<div class=\"row\">\n";
+    
+    echo "<div class='col-xs-6'><div class=\"panel panel-default\">\n";
+    echo "<div class=\"panel-heading\">". _('Owner of zone') . "</div>\n";
 echo "    <table class=\"table  table-bordered table-hover\">\n";
-echo "     <tr>\n";
-echo "      <th colspan=\"2\">" . _('Owner of zone') . "</th>\n";
-echo "     </tr>\n";
 
 $owners = get_users_from_domain_id($zone_id);
 
@@ -395,7 +415,7 @@ if ($owners == "-1") {
             echo "        <td>" . $owner["fullname"] . "</td>\n";
             echo "        <td>\n";
             echo "         <input type=\"hidden\" name=\"delete_owner\" value=\"" . $owner["id"] . "\">\n";
-            echo "         <input type=\"submit\" class=\"sbutton\" name=\"co\" value=\"" . _('Delete') . "\">\n";
+            echo "         <input type=\"submit\" class=\"btn btn-danger btn-sm\" name=\"co\" value=\"" . _('Delete') . "\">\n";
             echo "        </td>\n";
             echo "        </form>\n";
             echo "       </tr>\n";
@@ -427,20 +447,17 @@ if ($meta_edit) {
     echo "         </select>\n";
     echo "        </td>\n";
     echo "        <td>\n";
-    echo "         <input type=\"submit\" class=\"sbutton\" name=\"co\" value=\"" . _('Add') . "\">\n";
+    echo "         <input type=\"submit\" class=\"btn btn-primary btn-sm\" name=\"co\" value=\"" . _('Add') . "\">\n";
     echo "        </td>\n";
     echo "       </tr>\n";
     echo "      </form>\n";
 }
-echo "      <tr>\n";
-echo "       <th colspan=\"2\">" . _('Type') . "</th>\n";
-echo "      </tr>\n";
-
+    echo "</table></div></div><div class='col-xs-6'><div class=\"panel panel-default\">\n";
+    echo "<div class=\"panel-heading\">" . _('Type') . "</div>\n";
+echo "      <div class=\"panel-body\">\n";
 if ($meta_edit) {
     echo "      <form action=\"" . htmlentities($_SERVER['PHP_SELF'], ENT_QUOTES) . "?id=" . $zone_id . "\" method=\"post\">\n";
     echo "       <input type=\"hidden\" name=\"domain\" value=\"" . $zone_id . "\">\n";
-    echo "       <tr>\n";
-    echo "        <td>\n";
     echo "         <select name=\"newtype\">\n";
     foreach ($server_types as $type) {
         $add = '';
@@ -454,25 +471,20 @@ if ($meta_edit) {
         echo "          <option" . $add . " value=\"" . $type . "\">" . strtolower($type) . "</option>\n";
     }
     echo "         </select>\n";
-    echo "        </td>\n";
-    echo "        <td>\n";
-    echo "         <input type=\"submit\" class=\"sbutton\" name=\"type_change\" value=\"" . _('Change') . "\">\n";
-    echo "        </td>\n";
-    echo "       </tr>\n";
+    echo "         <input type=\"submit\" class=\"btn btn-primary btn-sm\" name=\"type_change\" value=\"" . _('Change') . "\">\n";
     echo "      </form>\n";
+
 } else {
-    echo "      <tr><td>" . strtolower($domain_type) . "</td><td>&nbsp;</td></tr>\n";
+    echo "      " . strtolower($domain_type) . "\n";
 }
 
-echo "      <tr>\n";
-echo "       <th colspan=\"2\">" . _('Template') . "</th>\n";
-echo "      </tr>\n";
+    echo "</div></div></div><div class='col-xs-6'><div class=\"panel panel-default\">\n";
+    echo "<div class=\"panel-heading\">" . _('Template') . "</div>\n";
+echo "      <div class=\"panel-body\">\n";
 
 if ($meta_edit) {
     echo "      <form action=\"" . htmlentities($_SERVER['PHP_SELF'], ENT_QUOTES) . "?id=" . $zone_id . "\" method=\"post\">\n";
     echo "       <input type=\"hidden\" name=\"current_zone_template\" value=\"" . $zone_template_id . "\">\n";
-    echo "       <tr>\n";
-    echo "        <td>\n";
     echo "         <select name=\"zone_template\">\n";
     echo "          <option value=\"none\">none</option>\n";
     foreach ($zone_templates as $zone_template) {
@@ -483,15 +495,11 @@ if ($meta_edit) {
         echo "          <option .  $add . value=\"" . $zone_template['id'] . "\">" . $zone_template['name'] . "</option>\n";
     }
     echo "         </select>\n";
-    echo "        </td>\n";
-    echo "        <td>\n";
-    echo "         <input type=\"submit\" class=\"sbutton\" name=\"template_change\" value=\"" . _('Change') . "\">\n";
-    echo "        </td>\n";
-    echo "       </tr>\n";
+    echo "         <input type=\"submit\" class=\"btn btn-primary btn-sm\" name=\"template_change\" value=\"" . _('Change') . "\">\n";
     echo "      </form>\n";
 } else {
     $zone_template_details = get_zone_templ_details($zone_template_id);
-    echo "      <tr><td>" . (isset($zone_template_details) ? strtolower($zone_template_details['name']) : "none" ) . "</td><td>&nbsp;</td></tr>\n";
+    echo "      " . (isset($zone_template_details) ? strtolower($zone_template_details['name']) : "none" ) . "\n";
 }
 
 if ($domain_type == "SLAVE") {
@@ -508,7 +516,7 @@ if ($domain_type == "SLAVE") {
         echo "         <input type=\"text\" name=\"new_master\" value=\"" . $slave_master . "\" class=\"input\">\n";
         echo "        </td>\n";
         echo "        <td>\n";
-        echo "         <input type=\"submit\" class=\"sbutton\" name=\"slave_master_change\" value=\"" . _('Change') . "\">\n";
+        echo "         <input type=\"submit\" class=\"btn btn-primary btn-sm\" name=\"slave_master_change\" value=\"" . _('Change') . "\">\n";
         echo "        </td>\n";
         echo "       </tr>\n";
         echo "      </form>\n";
@@ -516,7 +524,7 @@ if ($domain_type == "SLAVE") {
         echo "      <tr><td>" . $slave_master . "</td><td>&nbsp;</td></tr>\n";
     }
 }
-echo "     </table>\n";
-echo "   </div>\n"; // eo div meta
+echo "</div></div></div></div>\n";
+
 
 include_once("inc/footer.inc.php");
