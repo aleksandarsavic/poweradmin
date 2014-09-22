@@ -1,3 +1,38 @@
+/* Overrides */
+table.table thead a {
+  color: black;
+}
+table.table th.actions {
+  width: 5%;
+}
+table.table td.name a {
+  color: inherit;
+}
+table.table td .form-control {
+  width: auto;
+  height: 26px;
+  font-size: 16px;
+  border-radius: 3px;
+}
+table.table td .wide {
+  width: 98%;
+}
+table.table td.checkbox input[type="checkbox"] {
+  margin-left: 0
+}
+
+.page-header {
+  padding-top: 0;
+  margin-top: 0;
+}
+.page-header h1 {
+  margin-top: 0;
+  font-size: 30px;
+}
+.page-header .breadcrumb {
+  margin-bottom: 0;
+}
+
 /*
  * http://getbootstrap.com/2.3.2/examples/sticky-footer.html
  * */
