@@ -661,61 +661,59 @@ function log_info($syslog_message) {
 function auth($msg = "", $type = "success") {
     include_once('inc/header.inc.php');
     include('inc/config.inc.php');
-
-    if ($msg) {
-        print "<div class=\"$type\">$msg</div>\n";
-    }
+    $type2bootstrap_alert = array(
+      "success" => "success",
+      "error"   => "danger"
+    );
+    $typebs = $type2bootstrap_alert[$type];
     ?>
-    <h2><?php echo _('Log in'); ?></h2>
-    <form method="post" action="<?php echo htmlentities($_SERVER["PHP_SELF"], ENT_QUOTES); ?>">
-        <input type="hidden" name="query_string" value="<?php echo htmlentities($_SERVER["QUERY_STRING"]); ?>">
-        <table border="0">
-            <tr>
-                <td class="n" width="100"><?php echo _('Username'); ?>:</td>
-                <td class="n"><input type="text" class="input" name="username" id="username"></td>
-            </tr>
-            <tr>
-                <td class="n"><?php echo _('Password'); ?>:</td>
-                <td class="n"><input type="password" class="input" name="password"></td>
-            </tr>
-            <tr>
-                <td class="n"><?php echo _('Language'); ?>:</td>
-                <td class="n">
-                    <select class="input" name="userlang">
-                        <?php
-                        // List available languages (sorted alphabetically)
-                        include_once('inc/countrycodes.inc.php');
-                        $locales = scandir('locale/');
-                        foreach ($locales as $locale) {
-                            if (strlen($locale) == 5) {
-                                $locales_fullname[$locale] = $countrycodes[substr($locale, 0, 2)];
-                            }
-                        }
-                        asort($locales_fullname);
-                        foreach ($locales_fullname as $locale => $language) {
-                            if ($locale == $iface_lang) {
-                                echo _('<option selected value="' . $locale . '">' . $language);
-                            } else {
-                                echo _('<option value="' . $locale . '">' . $language);
-                            }
-                        }
-                        ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="n">&nbsp;</td>
-                <td class="n">
-                    <input type="submit" name="authenticate" class="button" value=" <?php echo _('Go'); ?> ">
-                </td>
-            </tr>
-        </table>
-    </form>
-    <script type="text/javascript">
-        <!--
-      document.getElementById('username').focus();
-        //-->
-    </script>
+    <div class="col-md-12">
+    <div class="modal-dialog" style="margin-bottom:0">
+    <div class="modal-content">
+      <div class="panel-heading">
+        <h3 class="panel-title"><?php echo($iface_title) ?> › <?php echo _('Log in'); ?></h3>
+      </div>
+      <div class="panel-body">
+        <?php if ($msg) {
+          print "<div class=\"alert alert-$typebs\" role=\"alert\">$msg</div>\n";
+        } ?>
+        <form role="form" method="post" action="<?php echo htmlentities($_SERVER["PHP_SELF"], ENT_QUOTES); ?>">
+        <fieldset>
+          <input type="hidden" name="query_string" value="<?php echo htmlentities($_SERVER["QUERY_STRING"]); ?>">
+          <div class="form-group">
+            <input class="form-control" placeholder="<?php echo _('Username'); ?>" name="username" type="text" autofocus="">
+          </div>
+          <div class="form-group">
+            <input class="form-control" placeholder="<?php echo _('Password'); ?>" name="password" type="password" value="">
+          </div>
+          <div class="form-group pull-right">
+            <select class="input" name="userlang">
+                <?php
+                // List available languages (sorted alphabetically)
+                include_once('inc/countrycodes.inc.php');
+                $locales = scandir('locale/');
+                foreach ($locales as $locale) {
+                    if (strlen($locale) == 5) {
+                        $locales_fullname[$locale] = $countrycodes[substr($locale, 0, 2)];
+                    }
+                }
+                asort($locales_fullname);
+                foreach ($locales_fullname as $locale => $language) {
+                    if ($locale == $iface_lang) {
+                        echo _('<option selected value="' . $locale . '">' . $language);
+                    } else {
+                        echo _('<option value="' . $locale . '">' . $language);
+                    }
+                }
+                ?>
+            </select>
+          </div>
+          <input type="submit" name="authenticate" class="btn btn-sm btn-success" value=" <?php echo _('Go'); ?> ">
+        </fieldset>
+        </form>
+      </div>
+    </div></div></div>
+
     <?php
     include_once('inc/footer.inc.php');
     exit;
